@@ -1,0 +1,2 @@
+library(PlateMap)
+PlateMap:::.test()

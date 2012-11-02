@@ -1,0 +1,13 @@
+Package: PlateMap
+Version: 0.1.0
+Type: Package
+Title: Create genotyping plate maps
+Description: 
+Author: Stephanie M. Gogarten, Caitlin McHugh, David Levine
+Maintainer: Stephanie M. Gogarten <sdmorris@u.washington.edu>
+Depends:
+Imports:
+Suggests: RUnit
+License: Artistic-2.0
+LazyData: yes
+biocViews: QualityControl, Microarray
