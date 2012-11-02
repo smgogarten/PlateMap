@@ -276,7 +276,6 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
   ##
   # plate duplicates
   if (!is.null(duplicates)) {
-    print(duplicates)
     for (r in 1:nrow(dups)) { 
       duptype <- dups$type[r]
       # make sure other member of pair is not on same plate
@@ -294,7 +293,6 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       } else {
         ind <- possiblewells
       }
-      print(ind)
       stopifnot(length(ind) == 1)
       ids$SampleID[ind] <- dups$SampleID[r]
       ids$type[ind] <- duptype
