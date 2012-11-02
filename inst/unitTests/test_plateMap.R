@@ -25,7 +25,7 @@ test_plateMapSimple <- function() {
   sample.data <- data.frame("SampleID"=1:(nplates*nwells),
                             "Group"=rep(1:4, nplates),
                             stringsAsFactors=FALSE)
-  map <- plateMap(sample.data, plate.data)
+  map <- plateMap(sample.data, plate.data, debug=TRUE)
   tmp <- merge(map, sample.data)
   checkTrue(all(table(tmp$Plate, tmp$Group) == 1))
 }
@@ -46,7 +46,7 @@ test_plateMapEmpty <- function() {
   tmp <- merge(map, sample.data)
   checkEquals(matrix(c(5,1,5,1), nrow=2), matrix(table(tmp$Plate, tmp$Group), nrow=2))
   
-  map <- plateMap(sample.data, plate.data, empty.wells.at.end=FALSE)
+  map <- plateMap(sample.data, plate.data, empty.wells.at.end=FALSE, debug=TRUE)
   tmp <- merge(map, sample.data)
   checkTrue(all(table(tmp$Plate, tmp$Group) == 3))
 }
@@ -56,4 +56,28 @@ test_plateMapDups <- function() {
   
 }
 
-# deal with case where "reserve" samples have type that is not present in rest of samples
+test_plateMapReserve <- function() {
+  nplates <- 5
+  nwells <- 4
+  plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
+                           "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
+                           "SampleID"=rep("", nplates*nwells),
+                           stringsAsFactors=FALSE)
+  sample.data <- data.frame("SampleID"=1:(nplates*nwells),
+                            "Group"=rep(1:2, (nplates*nwells)/2),
+                            "Reserve"=rep(FALSE, nplates*nwells),
+                            stringsAsFactors=FALSE)
+  res.ind <- c(1,6,11,17,18)
+  sample.data$Reserve[res.ind] <- TRUE
+
+  # should be one Reserve sample per plate
+  map <- plateMap(sample.data, plate.data, debug=TRUE)
+  reserve.id <- sample.data$SampleID[sample.data$Reserve]
+  checkEquals(nplates, length(unique(map$Plate[map$SampleID %in% reserve.id])))
+  
+  # deal with case where "reserve" samples have type that is not present in rest of samples
+  sample.data$Group[res.ind] <- 3
+  map <- plateMap(sample.data, plate.data, debug=TRUE)
+  reserve.id <- sample.data$SampleID[sample.data$Reserve]
+  checkEquals(nplates, length(unique(map$Plate[map$SampleID %in% reserve.id])))
+}
