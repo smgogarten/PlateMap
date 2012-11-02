@@ -58,8 +58,8 @@ plateMap(sample.data, plate.data, duplicates=NULL,
 \examples{
 head(plate.data)
 head(sample.data)
-head(duplicates)
-map <- plateMap(sample.data, plate.data, duplicates, debug=TRUE)
+head(duplicate.data)
+map <- plateMap(sample.data, plate.data, duplicate.data, debug=TRUE)
 tmp <- merge(map, sample.data)
 table(tmp$Plate, paste(tmp$Sex, tmp$Group, sep="."))
 }

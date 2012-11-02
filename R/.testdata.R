@@ -9,8 +9,6 @@ plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep
 # reserve some wells for controls
 plate.data$SampleID[plate.data$Well %in% c("Well95","Well96")] <- "control"
 
-save(plate.data, file="../data/plates.RData")
-
 
 # sample data
 navail <- sum(plate.data$SampleID == "")
@@ -32,17 +30,15 @@ sample.data <- data.frame("SampleID"=ids, "Sex"=sex,
                           stringsAsFactors=FALSE)
 
 # duplicate list
-duplicates <- data.frame("SampleID.1"=ids[1:ndup],
+duplicate.data <- data.frame("SampleID.1"=ids[1:ndup],
                    "SampleID.2"=paste("Dup", 1:ndup, sep=""),
                    stringsAsFactors=FALSE)
 
-save(duplicates, file="../data/duplicates.RData")
-
 # add duplicates to sample.data
-dup.data <- merge(duplicates, sample.data, by.x="SampleID.1", by.y="SampleID",
+dup.data <- merge(duplicate.data, sample.data, by.x="SampleID.1", by.y="SampleID",
                   sort=FALSE)
 dup.data <- dup.data[,2:ncol(dup.data)]
 names(dup.data)[1] <- "SampleID"
 sample.data <- rbind(sample.data, dup.data)
 
-save(sample.data, file="../data/samples.RData")
+save(plate.data, sample.data, duplicate.data, file="../data/testdata.RData")
