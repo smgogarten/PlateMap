@@ -81,3 +81,20 @@ test_plateMapReserve <- function() {
   reserve.id <- sample.data$SampleID[sample.data$Reserve]
   checkEquals(nplates, length(unique(map$Plate[map$SampleID %in% reserve.id])))
 }
+
+test_plateMapFamily <- function() {
+  nplates <- 5
+  nwells <- 4
+  plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
+                           "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
+                           "SampleID"=rep("", nplates*nwells),
+                           stringsAsFactors=FALSE)
+  sample.data <- data.frame("Family"=c(1,1,1,1, 2,2,2, 3,3, 4,4, 5,5,
+                                       6,7,8,9,10,11,12),
+                            "SampleID"=1:(nplates*nwells),
+                            "Group"=rep(1:2, (nplates*nwells)/2),
+                            stringsAsFactors=FALSE)
+  map <- plateMap(sample.data, plate.data, debug=TRUE)
+  tmp <- merge(map, sample.data)
+  checkTrue(all(colSums(table(tmp$Plate, tmp$Family) > 0) == 1))
+}

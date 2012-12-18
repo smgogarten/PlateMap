@@ -139,8 +139,12 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
   ##
   # if there are families, they should be plated together
   if ("Family" %in% names(strata)) {
-    # order families by size
+    # divide strata into families and singles
     famsize <- table(strata$Family)
+    single <- names(famsize)[famsize == 1]
+  
+    # order families by size
+    famsize <- famsize[!(names(famsize) %in% single)]
     famsize <- sort(famsize, decreasing=TRUE)
 
     # randomize families within size groups
@@ -178,76 +182,76 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       strata$plate[thisfam] <- thisplate
       strata$used[thisfam] <- 1
     }
+  }
   
   ##
-  # if there are no families, we can determine number of samples
+  # for singletons, we can determine number of samples
   # of each type for each plate
-  } else {
-    # find the approx number of wells per type per plate-batch
-    # want approx = number of each type per plate
-    samppertype <- table(strata$type)
-    wellsperpl <- table(ids$Plate[ids$SampleID == ""])
-    totalwells <- sum(wellsperpl)
-    typeperpl <- matrix(0, nrow=length(wellsperpl), ncol=length(samppertype),
-                        dimnames=list(names(wellsperpl), names(samppertype)))
-    for (i in 1:nrow(typeperpl)) {
-      typeperpl[i,] <- floor(samppertype * (wellsperpl[i] / totalwells))
-    }
-    
-    # randomly assign residual types to plates
-    residtypes <- samppertype - colSums(typeperpl)
-    residwells <- wellsperpl - rowSums(typeperpl)
-    types <- names(residtypes)[order(residtypes, decreasing=TRUE)]
-    for (ty in types) {
-      while (residtypes[ty] > 0) {
-        randplates <- .sample(pnames)
-        for (pl in randplates) {
-          if (residwells[pl] > 0) {
-            typeperpl[pl,ty] <- typeperpl[pl,ty] + 1
-            residtypes[ty] <- residtypes[ty] - 1
-            residwells[pl] <- residwells[pl] - 1
-          }
-          if (residtypes[ty] == 0) break
-        }
-      }
-    }
-    stopifnot(all(colSums(typeperpl) == samppertype))
-    if (empty.wells.at.end) stopifnot(sum(typeperpl) == sum(ids$SampleID == ""))
-    
-    ##
-    # plate samples by type
-    for(pl in pnames) { # loop through plates
-      for(ty in unique(strata$type)) { # loop through types
-        ss <- typeperpl[pl,ty]
-        if(ss > 0) {
-          # randomly select which SampleIDs of this type to plate
-          possibleids <- strata$SampleID[which(strata$used==0 & strata$type==ty)]
-          stopifnot(length(possibleids) > 0)
-          if (length(possibleids) > 1) {
-            sids <- .sample(possibleids, ss)
-          } else {
-            sids <- possibleids
-          }
-          # randomly select which positions to store them
-          possiblewells <- which(ids$Plate==pl & ids$SampleID=="")
-          stopifnot(ss <= length(possiblewells))
-          if (length(possiblewells) > 1) {
-            inds <- .sample(possiblewells, ss)
-          } else {
-            inds <- possiblewells
-          }
-          stopifnot(length(inds)==length(sids))
-          # assign the selected SampleIDs to the selected positions
-          ids$SampleID[inds] <- sids
-          ids$type[inds] <- ty
-          strata$plate[is.element(strata$SampleID, sids)] <- pl
-          strata$used[is.element(strata$SampleID, sids)] <- 1
-        }
-      }
-    }
-    if (empty.wells.at.end) stopifnot(sum(ids$SampleID == "") == 0)
+  # find the approx number of wells per type per plate-batch
+  # want approx = number of each type per plate
+  samppertype <- table(strata$type[which(strata$used == 0)])
+  wellsperpl <- table(ids$Plate[ids$SampleID == ""])
+  totalwells <- sum(wellsperpl)
+  typeperpl <- matrix(0, nrow=length(wellsperpl), ncol=length(samppertype),
+                      dimnames=list(names(wellsperpl), names(samppertype)))
+  for (i in 1:nrow(typeperpl)) {
+    typeperpl[i,] <- floor(samppertype * (wellsperpl[i] / totalwells))
   }
-
+  
+  # randomly assign residual types to plates
+  residtypes <- samppertype - colSums(typeperpl)
+  residwells <- wellsperpl - rowSums(typeperpl)
+  types <- names(residtypes)[order(residtypes, decreasing=TRUE)]
+  # reset plate names in case families filled up some plates
+  pnames <- names(wellsperpl)
+  for (ty in types) {
+    while (residtypes[ty] > 0) {
+      randplates <- .sample(pnames)
+      for (pl in randplates) {
+        if (residwells[pl] > 0) {
+          typeperpl[pl,ty] <- typeperpl[pl,ty] + 1
+          residtypes[ty] <- residtypes[ty] - 1
+          residwells[pl] <- residwells[pl] - 1
+        }
+        if (residtypes[ty] == 0) break
+      }
+    }
+  }
+  stopifnot(all(colSums(typeperpl) == samppertype))
+  if (empty.wells.at.end) stopifnot(sum(typeperpl) == sum(ids$SampleID == ""))
+  
+  ##
+  # plate samples by type
+  for(pl in pnames) { # loop through plates
+    for(ty in unique(strata$type)) { # loop through types
+      ss <- typeperpl[pl,ty]
+      if(ss > 0) {
+        # randomly select which SampleIDs of this type to plate
+        possibleids <- strata$SampleID[which(strata$used==0 & strata$type==ty)]
+        stopifnot(length(possibleids) > 0)
+        if (length(possibleids) > 1) {
+          sids <- .sample(possibleids, ss)
+        } else {
+          sids <- possibleids
+        }
+        # randomly select which positions to store them
+        possiblewells <- which(ids$Plate==pl & ids$SampleID=="")
+        stopifnot(ss <= length(possiblewells))
+        if (length(possiblewells) > 1) {
+          inds <- .sample(possiblewells, ss)
+        } else {
+          inds <- possiblewells
+        }
+        stopifnot(length(inds)==length(sids))
+        # assign the selected SampleIDs to the selected positions
+        ids$SampleID[inds] <- sids
+        ids$type[inds] <- ty
+        strata$plate[is.element(strata$SampleID, sids)] <- pl
+        strata$used[is.element(strata$SampleID, sids)] <- 1
+      }
+    }
+  }
+  if (empty.wells.at.end) stopifnot(sum(ids$SampleID == "") == 0)
   
   ##
   # plate reserved samples
