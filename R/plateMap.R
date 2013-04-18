@@ -161,7 +161,6 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
   
     # assign families to plates, starting with largest first
     for (f in 1:length(famnames)) {
-      ids.tmp <- ids
       thisfam <- strata$Family == famnames[f]
       size <- sum(thisfam)
       # get number of available wells per plate
@@ -223,7 +222,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
   ##
   # plate samples by type
   for(pl in pnames) { # loop through plates
-    for(ty in unique(strata$type)) { # loop through types
+    for(ty in colnames(typeperpl)) { # loop through types
       ss <- typeperpl[pl,ty]
       if(ss > 0) {
         # randomly select which SampleIDs of this type to plate

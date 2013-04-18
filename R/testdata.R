@@ -41,4 +41,4 @@ dup.data <- dup.data[,2:ncol(dup.data)]
 names(dup.data)[1] <- "SampleID"
 sample.data <- rbind(sample.data, dup.data)
 
-save(plate.data, sample.data, duplicate.data, file="../data/testdata.RData")
+#save(plate.data, sample.data, duplicate.data, file="../data/testdata.RData")
