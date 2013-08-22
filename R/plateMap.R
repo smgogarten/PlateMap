@@ -166,7 +166,10 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       # get number of available wells per plate
       nwells <- vapply(pnames, function(x) {sum(ids$Plate == x & ids$SampleID == "")}, 1L)
       # find plates with enough wells for family
-      possibleplates <- names(nwells)[nwells >= size]
+      #possibleplates <- names(nwells)[nwells >= size]
+      # find plates with max number of empty wells
+      # this way each plate will get a family before we start re-using plates
+      possibleplates <- names(nwells)[nwells == max(nwells)]
       # find best plates for this type
       #possibleplates <- .platesForType(possTypes, possibleplates, thistype, ids)
       # select one of the possible plates
