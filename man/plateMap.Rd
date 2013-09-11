@@ -5,7 +5,9 @@
   important variables across plates.}
 \usage{
 plateMap(sample.data, plate.data, duplicates=NULL,
-         empty.wells.at.end=TRUE, debug=FALSE)
+         empty.wells.at.end=TRUE,
+         families.at.random=TRUE,
+         debug=FALSE)
 }
 
 \arguments{
@@ -32,6 +34,13 @@ plateMap(sample.data, plate.data, duplicates=NULL,
   \item{empty.wells.at.end}{A logical.  If \code{TRUE}, all empty wells
     will be adjacent on the last plate.  If \code{FALSE}, empty wells will
     be randomly distributed across plates.
+  }
+  \item{families.at.random}{A logical.  If \code{TRUE}, families will be
+    plated at random, with the constraint that all members of the family
+    will fit on the plate.  If \code{FALSE}, plates for families will be
+    selected in order of the number of empty wells, such that all plates
+    will have at least one family before any plate has more than one
+    family.
   }
   \item{debug}{A logical.  If \code{TRUE}, the the "random" sampling of
     sample ids & well positions will be taken from a previously set

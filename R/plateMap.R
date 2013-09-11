@@ -21,7 +21,9 @@
 }
   
 plateMap <- function(sample.data, plate.data, duplicates=NULL,
-                      empty.wells.at.end=TRUE, debug=FALSE) {
+                     empty.wells.at.end=TRUE,
+                     families.at.random=TRUE,
+                     debug=FALSE) {
 
   # redefine sample with debug parameter
   # AND so that sample(x) returns x if length(x) == 1, rather than sample(1:x)
@@ -165,11 +167,14 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       size <- sum(thisfam)
       # get number of available wells per plate
       nwells <- vapply(pnames, function(x) {sum(ids$Plate == x & ids$SampleID == "")}, 1L)
-      # find plates with enough wells for family
-      #possibleplates <- names(nwells)[nwells >= size]
-      # find plates with max number of empty wells
-      # this way each plate will get a family before we start re-using plates
-      possibleplates <- names(nwells)[nwells == max(nwells)]
+      if (families.at.random) {
+        ## find plates with enough wells for family
+        possibleplates <- names(nwells)[nwells >= size]
+      } else {
+        ## find plates with max number of empty wells
+        ## this way each plate will get a family before we start re-using plates
+        possibleplates <- names(nwells)[nwells == max(nwells)]
+      }
       # find best plates for this type
       #possibleplates <- .platesForType(possTypes, possibleplates, thistype, ids)
       # select one of the possible plates
