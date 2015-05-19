@@ -40,7 +40,6 @@ redoPlateMap <- function(sample.data, n.orig.plates=24,
                                      Well=paste("Well", rep(1:nb, np), sep=""),
                                      SampleID=rep("", np*nb), stringsAsFactors=FALSE)
 
-        ## no duplicates here
         pm.tmp <- plateMap(sample.strata, plate.manifest, ...)
 
         ## keep the first two batches, assign to one plate
