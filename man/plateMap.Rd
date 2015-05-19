@@ -62,7 +62,7 @@ plateMap(sample.data, plate.data, duplicates=NULL,
 
 \author{Stephanie M. Gogarten, Caitlin McHugh, David Levine}
 
-\seealso{}
+%\seealso{}
 
 \examples{
 head(plate.data)

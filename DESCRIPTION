@@ -1,8 +1,8 @@
 Package: PlateMap
-Version: 0.2.3
+Version: 0.3.0
 Type: Package
 Title: Create genotyping plate maps
-Description: 
+Description: Create genotyping plate maps.
 Author: Stephanie M. Gogarten, Caitlin McHugh, David Levine
 Maintainer: Stephanie M. Gogarten <sdmorris@u.washington.edu>
 Depends:
