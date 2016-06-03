@@ -1,6 +1,6 @@
 redoPlateMap <- function(sample.data, n.orig.plates=24,
                          batch.size=48, batches.per.plate=2,
-                         duplicates=duplicates, ...) {
+                         duplicates=NULL, ...) {
 
     stopifnot(all(c("SampleID", "Orig.Plate") %in% names(sample.data)))
 
@@ -41,9 +41,9 @@ redoPlateMap <- function(sample.data, n.orig.plates=24,
                                      Well=paste("Well", rep(1:nb, np), sep=""),
                                      SampleID=rep("", np*nb), stringsAsFactors=FALSE)
 
-        duplicates <- duplicates[dups[,1] %in% sample.strata$SampleID &
-                                 dups[,2] %in% sample.strata$SampleID,]
-        pm.tmp <- plateMap(sample.strata, plate.manifest, ...)
+        dups <- duplicates[duplicates[,1] %in% sample.strata$SampleID &
+                           duplicates[,2] %in% sample.strata$SampleID,]
+        pm.tmp <- plateMap(sample.strata, plate.manifest, duplicates=dups, ...)
 
         ## keep the first two batches, assign to one plate
         ## unless we're stuck, then just keep one batch

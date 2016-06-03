@@ -1,10 +1,10 @@
 \name{redoPlateMap}
 \alias{redoPlateMap}
 \title{Plate samples for redos}
-\description{Plate sampels for redos with a constraint on the number of original plates from which each original plate is drawn.}
+\description{Plate samples for redos with a constraint on the number of original plates from which each original plate is drawn.}
 \usage{
 redoPlateMap(sample.data, n.orig.plates=24,
-             batch.size=48, batches.per.plate=2, ...)
+             batch.size=48, batches.per.plate=2, duplicates=NULL, ...)
 }
 
 \arguments{
@@ -21,6 +21,7 @@ redoPlateMap(sample.data, n.orig.plates=24,
   \item{n.orig.plates}{Maximum number of original plates from which samples on a new plate can be drawn.}
   \item{batch.size}{Size of each batch of samples on the new plate. Can be useful to make this half a plate if there are many original plates.}
   \item{batches.per.plate}{Number of batches on each new plate.}
+  \item{duplicates}{data frame of duplicate pairs}
   \item{\dots}{Other arguments passed to \code{\link{plateMap}}.}
 }
 
