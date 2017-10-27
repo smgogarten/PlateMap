@@ -1,0 +1,78 @@
+---
+title: "Creating Plate Maps"
+author: "Stephanie Gogarten"
+package: PlateMap
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating Plate Maps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The PlateMap package is intended to help balance plates for genotyping arrays by distributing samples with common characteristics evenly across plates.
+
+Here is an empty plate manifest awaiting samples:
+
+```{r}
+head(plate.data)
+tail(plate.data)
+```
+
+Note that two slots on each plate have been reserved for controls.
+
+Here is a table of samples with associated data:
+
+```{r}
+head(sample.data)
+tail(sample.data)
+```
+
+Some of these samples are duplicates, and should be placed on different plates from the original. We also want to make sure that the duplicates are evenly spread out across plates.
+
+```{r}
+head(duplicate.data)
+```
+
+A common plate map design is to stratify samples by case-control status, or another grouping variable such as recruitment site. We select the column(s) we want to stratify on:
+
+```{r}
+sample.group <- sample.data[,c("SampleID", "Group")]
+map <- plateMap(sample.group, plate.data, duplicate.data, debug=TRUE)
+```
+
+We can check that the groups are evenly distributed:
+
+```{r}
+tmp <- merge(map, sample.group)
+table(tmp$Plate, tmp$Group)
+```
+
+Plate9 has fewer samples because all empty wells are on the last plate. We could change this by setting `empty.wells.at.end=FALSE`.
+
+We can stratify on more than one variable at a time:
+
+```{r}
+sample.group <- sample.data[,c("SampleID", "Group", "Sex")]
+map <- plateMap(sample.group, plate.data, duplicate.data, debug=TRUE)
+tmp <- merge(map, sample.data)
+table(tmp$Plate, paste(tmp$Sex, tmp$Group, sep="."))
+```
+
+We can also designate a "Reserve" column that indicates samples to be evenly distributed across plates outside of stratification (such as cross-study duplicates or WGA samples).
+
+```{r}
+sample.group <- sample.data[,c("SampleID", "Group", "Reserve")]
+map <- plateMap(sample.group, plate.data, duplicate.data, debug=TRUE)
+tmp <- merge(map, sample.group)
+table(tmp$Plate, tmp$Reserve)
+```
+
+If some samples are related to each other, it is often desirable to plate all family members together, to avoid artifacts in pedigree-based analysis. Adding a "Family" column to the sample.data will accomplish this.
+
+```{r, eval=FALSE}
+sample.family <- sample.data[,c("SampleID", "Family")]
+map <- plateMap(sample.family, plate.data, duplicate.data, debug=TRUE)
+tmp <- merge(map, sample.data)
+```

@@ -1,5 +1,5 @@
 Package: PlateMap
-Version: 0.3.2
+Version: 1.0.0
 Type: Package
 Title: Create genotyping plate maps
 Description: Create genotyping plate maps.
@@ -7,7 +7,8 @@ Author: Stephanie M. Gogarten, Caitlin McHugh, David Levine
 Maintainer: Stephanie M. Gogarten <sdmorris@u.washington.edu>
 Depends:
 Imports:
-Suggests: RUnit
+Suggests: RUnit, knitr
+VignetteBuilder: knitr
 License: Artistic-2.0
 LazyData: yes
 biocViews: QualityControl, Microarray
