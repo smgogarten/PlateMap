@@ -167,6 +167,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       size <- sum(thisfam)
       # get number of available wells per plate
       nwells <- vapply(pnames, function(x) {sum(ids$Plate == x & ids$SampleID == "")}, 1L)
+      stopifnot(any(nwells >= size))
       if (families.at.random) {
         ## find plates with enough wells for family
         possibleplates <- names(nwells)[nwells >= size]
