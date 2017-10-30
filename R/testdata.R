@@ -1,10 +1,10 @@
-# plate data - 10 96-well plates
-nplates <- 10
+# plate data - 9 96-well plates
+nplates <- 9
 nwells <- 96
-plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
-                       "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
-                       "SampleID"=rep("", nplates*nwells),
-                       stringsAsFactors=FALSE)
+plate.data <- data.frame("Plate"=paste0("Plate", rep(1:nplates, each=nwells)),
+                        "Well"=paste0("Well", rep(1:nwells, nplates)),
+                        "SampleID"=rep("", nplates*nwells),
+                        stringsAsFactors=FALSE)
 
 # reserve some wells for controls
 plate.data$SampleID[plate.data$Well %in% c("Well95","Well96")] <- "control"
@@ -12,26 +12,31 @@ plate.data$SampleID[plate.data$Well %in% c("Well95","Well96")] <- "control"
 
 # sample data
 navail <- sum(plate.data$SampleID == "")
-ndup <- 20
-nempty <- 20
+ndup <- nplates*2
+nempty <- 10
 nsamp <- navail - ndup - nempty
 ids <- paste("Sample", 1:nsamp, sep="")
 sex <- rep("M", nsamp)
 sex[sample(1:nsamp, round(0.4*nsamp))] <- "F"
 group <- rep("A", nsamp)
-group[sample(1:nsamp, round(0.1*nsamp))] <- "B"
-group[sample(1:nsamp, round(0.3*nsamp))] <- "C"
-group[sample(1:nsamp, round(0.2*nsamp))] <- "D"
+group[sample(1:nsamp, round(0.3*nsamp))] <- "B"
+group[sample(1:nsamp, round(0.1*nsamp))] <- "C"
 reserve <- rep(FALSE, nsamp)
 reserve[sample(1:nsamp, nplates*1.5)] <- TRUE
+family.size <- c(rep(10, round(0.01*nsamp)), 
+                 rep(5, round(0.05*nsamp)),
+                 rep(2, round(0.1*nsamp)))
+family.size <- c(family.size, rep(1, nsamp - sum(family.size)))
+family <- rep(seq_along(family.size), times=family.size)
 
-sample.data <- data.frame("SampleID"=ids, "Sex"=sex,
+sample.data <- data.frame("SampleID"=ids, "Family"=family, "Sex"=sex,
                           "Group"=group, "Reserve"=reserve,
                           stringsAsFactors=FALSE)
 
 # duplicate list
-duplicate.data <- data.frame("SampleID.1"=ids[1:ndup],
-                   "SampleID.2"=paste("Dup", 1:ndup, sep=""),
+dup.ids <- sort(sample(1:nsamp, ndup))
+duplicate.data <- data.frame("SampleID.1"=ids[dup.ids],
+                   "SampleID.2"=paste("Dup", dup.ids, sep=""),
                    stringsAsFactors=FALSE)
 
 # add duplicates to sample.data

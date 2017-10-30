@@ -42,6 +42,7 @@ redoPlateMap(sample.data, n.orig.plates=24,
 head(plate.data)
 head(sample.data)
 head(duplicate.data)
+sample.data <- sample.data[,c("SampleID", "Group", "Sex")]
 map <- plateMap(sample.data, plate.data, duplicate.data, debug=TRUE)
 tmp <- merge(map, sample.data)
 table(tmp$Plate, paste(tmp$Sex, tmp$Group, sep="."))

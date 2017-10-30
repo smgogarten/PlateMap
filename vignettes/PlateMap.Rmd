@@ -16,6 +16,7 @@ The PlateMap package is intended to help balance plates for genotyping arrays by
 Here is an empty plate manifest awaiting samples:
 
 ```{r}
+library(PlateMap)
 head(plate.data)
 tail(plate.data)
 ```
@@ -74,5 +75,6 @@ If some samples are related to each other, it is often desirable to plate all fa
 ```{r, eval=FALSE}
 sample.family <- sample.data[,c("SampleID", "Family")]
 map <- plateMap(sample.family, plate.data, duplicate.data, debug=TRUE)
-tmp <- merge(map, sample.data)
+tmp <- merge(map, sample.family)
+head(tmp[order(tmp$Family),])
 ```

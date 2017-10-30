@@ -69,9 +69,16 @@ plateMap(sample.data, plate.data, duplicates=NULL,
 head(plate.data)
 head(sample.data)
 head(duplicate.data)
-map <- plateMap(sample.data, plate.data, duplicate.data, debug=TRUE)
-tmp <- merge(map, sample.data)
+sample.group <- sample.data[,c("SampleID", "Group", "Sex")]
+map <- plateMap(sample.group, plate.data, duplicate.data, debug=TRUE)
+tmp <- merge(map, sample.group)
 table(tmp$Plate, paste(tmp$Sex, tmp$Group, sep="."))
+
+sample.family <- sample.data[,c("SampleID", "Family", "Group")]
+map <- plateMap(sample.family, plate.data, duplicate.data, debug=TRUE)
+tmp <- merge(map, sample.family)
+head(tmp[order(tmp$Family),])
+table(tmp$Plate, tmp$Group)
 }
 
 \keyword{manip}
