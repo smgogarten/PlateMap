@@ -6,6 +6,7 @@
 # type - find plates with the minimum ratio of this type
 # current - current map with columns "Plate," "type"
 .platesForType <- function(possTypes, plates, type, current) {
+  if (length(possTypes) == 1) return(plates)
   currentTypes <- intersect(c(possTypes, 0), unique(current$type))
   if (type %in% currentTypes) {
     platebalance <- table(current$Plate, current$type)[plates, currentTypes]

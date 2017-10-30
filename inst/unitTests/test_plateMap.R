@@ -51,11 +51,6 @@ test_plateMapEmpty <- function() {
   checkTrue(all(table(tmp$Plate, tmp$Group) == 3))
 }
 
-test_plateMapDups <- function() {
-  # check that duplicates are plated appropriately
-  
-}
-
 test_plateMapReserve <- function() {
   nplates <- 5
   nwells <- 4
@@ -127,4 +122,21 @@ test_plateMapFamilyRandom <- function() {
     map <- plateMap(sample.data, plate.data, debug=TRUE)
     tmp <- merge(map, sample.data)
     checkTrue(all(colSums(table(tmp$Plate, tmp$Family) > 0) == 1))
+}
+
+test_plateMapDups <- function() {
+    # check that duplicates are plated appropriately
+    nplates <- 5
+    nwells <- 4
+    plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
+                             "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
+                             "SampleID"=rep("", nplates*nwells),
+                             stringsAsFactors=FALSE)
+    sample.data <- data.frame("SampleID"=1:(nplates*nwells),
+                              "Group"=rep(1:4, nplates),
+                              stringsAsFactors=FALSE)
+    duplicates <- data.frame(SampleID1=c(1,2), SampleID2=c(3,4), stringsAsFactors=FALSE)
+    map <- plateMap(sample.data, plate.data, duplicates, debug=TRUE)
+    checkTrue(map$Plate[map$SampleID == 1] != map$Plate[map$SampleID == 3])
+    checkTrue(map$Plate[map$SampleID == 2] != map$Plate[map$SampleID == 4])
 }
