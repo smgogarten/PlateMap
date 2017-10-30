@@ -40,12 +40,17 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
   }
  
   # load sample.data data (randomize rows)
-  strata <- sample.data[.sample(1:nrow(sample.data)),]       
+  strata <- sample.data[.sample(1:nrow(sample.data)),,drop=FALSE]       
   
   ##
   # define the types
   # first, find out how many strata exist
-  ns <- names(strata)[!(names(strata) %in% c("SampleID", "Reserve", "Family"))]
+  ns <- setdiff(names(strata), c("SampleID", "Reserve", "Family"))
+  # no strata
+  if (length(ns) == 0) {
+    strata$Group <- "A"
+    ns <- "Group"
+  }
   for(r in 1:nrow(strata)) {
     strata$type[r] <-  paste(strata[r,ns], collapse=".")
   }

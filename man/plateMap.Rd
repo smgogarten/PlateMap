@@ -13,7 +13,8 @@ plateMap(sample.data, plate.data, duplicates=NULL,
 \arguments{
   \item{sample.data}{A data.frame with sample data, including "SampleID,"
     and as many other columns as there are categories on which to
-    stratify the plate maps.
+    stratify the plate maps. If there are no other columns, the plate map
+    will be completly random.
     An optional column called "Reserve" is a logical variable for samples that
     should be distributed evenly across plates outside of stratification
     (such as cross-study duplicates or WGA samples).

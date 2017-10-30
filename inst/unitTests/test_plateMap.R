@@ -98,3 +98,33 @@ test_plateMapFamily <- function() {
   tmp <- merge(map, sample.data)
   checkTrue(all(colSums(table(tmp$Plate, tmp$Family) > 0) == 1))
 }
+
+test_plateMapRandom <- function() {
+    # completely random plate map
+    nplates <- 5
+    nwells <- 4
+    plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
+                             "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
+                             "SampleID"=rep("", nplates*nwells),
+                             stringsAsFactors=FALSE)
+    sample.data <- data.frame("SampleID"=1:(nplates*nwells),
+                              stringsAsFactors=FALSE)
+    map <- plateMap(sample.data, plate.data, debug=TRUE)
+    checkTrue(all(sample.data$SampleID %in% map$SampleID))
+}
+
+test_plateMapFamilyRandom <- function() {
+    nplates <- 5
+    nwells <- 4
+    plate.data <- data.frame("Plate"=paste("Plate", rep(1:nplates, each=nwells), sep=""),
+                             "Well"=paste("Well", rep(1:nwells, nplates), sep=""),
+                             "SampleID"=rep("", nplates*nwells),
+                             stringsAsFactors=FALSE)
+    sample.data <- data.frame("Family"=c(1,1,1,1, 2,2,2, 3,3, 4,4, 5,5,
+                                         6,7,8,9,10,11,12),
+                              "SampleID"=1:(nplates*nwells),
+                              stringsAsFactors=FALSE)
+    map <- plateMap(sample.data, plate.data, debug=TRUE)
+    tmp <- merge(map, sample.data)
+    checkTrue(all(colSums(table(tmp$Plate, tmp$Family) > 0) == 1))
+}
