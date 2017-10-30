@@ -173,7 +173,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       size <- sum(thisfam)
       # get number of available wells per plate
       nwells <- vapply(pnames, function(x) {sum(ids$Plate == x & ids$SampleID == "")}, 1L)
-      stopifnot(any(nwells >= size))
+      if (!any(nwells >= size)) stop("not enough available wells for family")
       if (families.at.random) {
         ## find plates with enough wells for family
         possibleplates <- names(nwells)[nwells >= size]
@@ -188,7 +188,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       thisplate <- .sample(possibleplates, 1)
       # select wells from this plate
       possiblewells <- which(ids$Plate %in% thisplate & ids$SampleID=="")
-      stopifnot(length(possiblewells) >= size)
+      if (!(length(possiblewells) >= size)) stop("no plates with enough wells for family")
       inds <- .sample(possiblewells, size)
       # assign family to wells
       ids$SampleID[inds] <- strata$SampleID[thisfam]
@@ -284,7 +284,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       } else {
         ind <- possiblewells
       }
-      stopifnot(length(ind) == 1)
+      if (length(ind) != 1) stop("could not plate reserved samples")
       ids$SampleID[ind] <- reserve$SampleID[r]
       ids$type[ind] <- restype
     }
@@ -311,7 +311,7 @@ plateMap <- function(sample.data, plate.data, duplicates=NULL,
       } else {
         ind <- possiblewells
       }
-      stopifnot(length(ind) == 1)
+      if (length(ind) != 1) stop("could not plate duplicates")
       ids$SampleID[ind] <- dups$SampleID[r]
       ids$type[ind] <- duptype
     }
